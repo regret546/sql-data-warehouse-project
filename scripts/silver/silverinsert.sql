@@ -80,3 +80,24 @@ CASE
 END AS sls_price
 FROM bronze.crm_sales_details
 -----------------------------------------------------------------------------------------
+INSERT INTO silver.erp_cust_az12 (cid, birthdate, gender)
+
+SELECT 
+	CASE 
+		WHEN cid LIKE 'NAS%' THEN SUBSTRING(cid,4, LEN(cid))
+		ELSE cid
+	END cid,
+	birthdate,
+	CASE 
+		WHEN birthdate > GETDATE() THEN NULL
+		ELSE birthdate
+	END AS birthdate,
+		CASE 
+		WHEN UPPER(TRIM(gender)) IN ('F', 'FEMALE') THEN 'Female'
+		WHEN UPPER(TRIM(gender)) IN ('M', 'MALE') THEN 'Male'
+		ELSE 'n/a'
+	END AS gender
+FROM bronze.erp_cust_az12
+
+
+-----------------------------------------------------------------------------------------

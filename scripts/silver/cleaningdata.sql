@@ -72,4 +72,30 @@ OR CAST(sls_price AS INT) IS NULL OR CAST(sls_sales AS INT) <= 0 OR
 CAST(sls_quantity AS INT) <= 0 OR CAST(sls_price AS INT) <= 0
 ORDER BY CAST(sls_sales AS INT), CAST(sls_quantity AS INT), CAST(sls_price AS INT)
 
+-- Identify Out-of-Range Dates
+SELECT DISTINCT
+	birthdate
+FROM bronze.erp_cust_az12
+WHERE birthdate < '1924-01-01' OR birthdate > GETDATE()
 
+-- Data Standardization and Consistency
+SELECT DISTINCT
+	gender,
+	CASE 
+		WHEN UPPER(TRIM(gender)) IN ('F', 'FEMALE') THEN 'Female'
+		WHEN UPPER(TRIM(gender)) IN ('M', 'MALE') THEN 'Male'
+		ELSE 'n/a'
+	END
+FROM bronze.erp_cust_az12
+
+-- Check for unwanted Spaces
+SELECT * FROM bronze.erp_px_cat_g1v2
+WHERE cat != TRIM(cat)
+
+-- Check for unwanted Spaces
+SELECT * FROM bronze.erp_px_cat_g1v2
+WHERE main != TRIM(main)
+
+-- Data Standardization & Consistency
+SELECT DISTINCT main
+FROM bronze.erp_px_cat_g1v2 
